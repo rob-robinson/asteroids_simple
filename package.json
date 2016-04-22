@@ -1,0 +1,20 @@
+{
+  "name": "astroids",
+  "version": "1.0.0",
+  "description": "small ship stuck in space... so far this is just for playful conceptualizing and learning the canvas element...",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "run": "gulp serve"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com-rob-robinson:rob-robinson/astroids_simple.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "browser-sync": "^2.12.3",
+    "gulp": "^3.9.1"
+  }
+}
