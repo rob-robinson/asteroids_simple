@@ -124,8 +124,8 @@ function addBullet(){
   });
 }
 
-var delay_count = 0;
-var delay = 5;
+var bullet_delay_count = 0;
+var bullet_delay = 5;
 
 var game = {
   tempScore:0,
@@ -235,15 +235,15 @@ var player = {
           player.moveUp();
       }
       if (activeKeys[32]) {
-        if(delay_count == 0){
+        if(bullet_delay_count == 0){
           player.fire();
         }
       }
 
-      if(delay_count == delay){
-        delay_count = 0;
+      if(bullet_delay_count == bullet_delay){
+        bullet_delay_count = 0;
       } else {
-        delay_count += 1;
+        bullet_delay_count += 1;
       }
 
       // add drag...
@@ -396,11 +396,16 @@ function init() {
         hasBeenHit : 0,
         status : 1,
 
+        rotation : rand_rotation,
+
         w : 100,
         h : 100,
 
         x : rand_start_x,        // Current x-coordinate
         y : rand_start_y,        // Current y-coordinate
+
+        rotation_delay_count : 0,
+        rotation_delay : randomIntFromInterval(0,50),
 
         display : function () {
 
@@ -411,11 +416,18 @@ function init() {
             this.h *= .996;
 
           } else {
-            drawRotatedImage(astroidImages[imageIndex],this.x,this.y,rand_rotation);
+            if(this.rotation_delay == this.rotation_delay_count){
+              drawRotatedImage(astroidImages[imageIndex],this.x,this.y,this.rotation++);
+              this.rotation_delay_count = 0;
+            } else {
+              drawRotatedImage(astroidImages[imageIndex],this.x,this.y,this.rotation);
+            }
           }
 
           this.x += this.dx;
           this.y += this.dy;
+
+          this.rotation_delay_count += 1;
         }
       });
 
