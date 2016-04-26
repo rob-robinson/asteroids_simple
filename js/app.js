@@ -10,21 +10,29 @@ window.requestAnimationFrame = function () {
             };
 };
 
-var Assets = {};
+//var Assets = {};
 var canvas;
-var context;
+var context; //
 var canvasWidth = window.innerWidth, canvasHeight = window.innerHeight;
-var mouseIsDown = false;
-var clickX,clickY;
-var releaseX,releaseY;
+//var mouseIsDown = false;
+// var clickX,clickY;
+// var releaseX,releaseY;
 
+/*
+TODO: some how I have to have the controls for this game be used by touching
+the bottom parts of the screen as well...
+*/
+
+// array of keys that are currently pressed
 var activeKeys = [];
 
 var astroids = [];
 var bullets = [];
 
+// this is the id of the setInterval that launches astroids...
 var intervalID;
 
+// an set of arrays to hold sine and cosine values for less computation in draw
 var Xacceleration = [], Yacceleration = [];
 
 for (var i=0; i<360; i+=1) {
@@ -39,20 +47,17 @@ function randomIntFromInterval(min,max)
 
 function addBullet(){
 
-  var theX = player.x;
-  var theY = player.y;
-
-  //console.log(Xacceleration[rotation], Yacceleration[rotation]);
-  //console.log(Xacceleration, player.rotation, Xacceleration[player.rotation]);
+  var starting_x = player.x;
+  var starting_y = player.y;
 
   var rotation = player.rotation;
 
   bullets.push({
 
-    beginX : theX,  // Initial x-coordinate
-    beginY : theY,  // Initial y-coordinate
-    // endX : randomIntFromInterval(theX-launchInterval,theX+launchInterval ),   // Final x-coordinate
-    // endY : randomIntFromInterval(theY-launchInterval,theY+launchInterval),   // Final y-coordinate
+    beginX : starting_x,  // Initial x-coordinate
+    beginY : starting_y,  // Initial y-coordinate
+    // endX : randomIntFromInterval(starting_x-launchInterval,starting_x+launchInterval ),   // Final x-coordinate
+    // endY : randomIntFromInterval(starting_y-launchInterval,starting_y+launchInterval),   // Final y-coordinate
     dx : Xacceleration[rotation],
     dy : Yacceleration[rotation],
     distX : 0,          // X-axis distance to move
@@ -65,8 +70,8 @@ function addBullet(){
     w : 4,
     h : 4,
 
-    x : theX,
-    y : theY,
+    x : starting_x,
+    y : starting_y,
 
     display : function () {
 
@@ -128,7 +133,7 @@ var game = {
 };
 
 
-  function drawRotatedImage(image, x, y, angle) {
+  function drawRotatedImage(image, x, y, angle, w, h) {
 
   	// save the current co-ordinate system
   	// before we screw with it
@@ -143,7 +148,9 @@ var game = {
 
   	// draw it up and to the left by half the width
   	// and height of the image
+
   	context.drawImage(image, -(image.width/2), -(image.height/2));
+
 
   	// and restore the co-ords to how they were when we began
   	context.restore();
@@ -151,6 +158,9 @@ var game = {
 
 var bullet_colors = ['red','orange','yellow','green','blue','purple','black'];
 var bullet_color_index = 0;
+
+var explosionImage = new Image();
+explosionImage.src = "img/explosion.png";
 
 var astroidImageTmp;
 var astroidImages = [];
@@ -195,7 +205,6 @@ var player = {
     },
     moveRight : function(){
       this.rotation += 1;
-      //this.rotation %= 360;
 
       if(this.rotation >= 360){
       	this.rotation -= 360;
@@ -322,8 +331,16 @@ function draw(){
         astroids[i].y = 2;
       }
 
-      if(astroids[i].hasBeenHit){
+      if(astroids[i].hasBeenHit &&
+        (astroids[i].x > canvasWidth-10 || astroids[i].x < 10 || astroids[i].y > canvasHeight-10 || astroids[i].y < 10)
+      ){
+
         astroids.splice(i,1);
+      }
+
+    if(astroids[i].hasBeenHit && astroids[i].w<10){
+
+      astroids.splice(i,1);
       }
     }
 
@@ -387,7 +404,15 @@ function init() {
 
         display : function () {
 
-          drawRotatedImage(astroidImages[imageIndex],this.x,this.y,rand_rotation);
+          if(this.hasBeenHit){
+            //drawRotatedImage(explosionImage,this.x,this.y,rand_rotation,100,100);
+            context.drawImage(explosionImage,this.x-this.w/2,this.y-this.h/2,this.w,this.h);
+            this.w *= .996;
+            this.h *= .996;
+
+          } else {
+            drawRotatedImage(astroidImages[imageIndex],this.x,this.y,rand_rotation);
+          }
 
           this.x += this.dx;
           this.y += this.dy;
