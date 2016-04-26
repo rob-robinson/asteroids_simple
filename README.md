@@ -1,5 +1,5 @@
-# Squirrel Bowling
+# Astroids
 
-use a squirrel as a bowling ball... this is just for playful conceptualizing and learning the canvas element...
+astroids... this is just for playful conceptualizing and learning the canvas element...
 
-<https://rob-robinson.github.io/squirrel_bowling>
+<https://rob-robinson.github.io/astroids>

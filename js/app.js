@@ -20,169 +20,113 @@ var releaseX,releaseY;
 
 var activeKeys = [];
 
+var astroids = [];
 var bullets = [];
 
+var intervalID;
 
+var Xacceleration = [], Yacceleration = [];
+
+for (var i=0; i<360; i+=1) {
+	Xacceleration[i]	=	Math.cos(i*Math.PI/180);
+	Yacceleration[i]	=	Math.sin(i*Math.PI/180);
+}
+
+function randomIntFromInterval(min,max)
+{
+    return Math.floor(Math.random()*(max-min+1)+min);
+}
 
 function addBullet(){
 
-  // var xValue = inX;
-  // var yValue = app.canvas.h-80;
   var theX = player.x;
   var theY = player.y;
+
+  //console.log(Xacceleration[rotation], Yacceleration[rotation]);
+  //console.log(Xacceleration, player.rotation, Xacceleration[player.rotation]);
+
+  var rotation = player.rotation;
 
   bullets.push({
 
     beginX : theX,  // Initial x-coordinate
     beginY : theY,  // Initial y-coordinate
-    endX : theX,   // Final x-coordinate
-    endY : theY+200,   // Final y-coordinate
+    // endX : randomIntFromInterval(theX-launchInterval,theX+launchInterval ),   // Final x-coordinate
+    // endY : randomIntFromInterval(theY-launchInterval,theY+launchInterval),   // Final y-coordinate
+    dx : Xacceleration[rotation],
+    dy : Yacceleration[rotation],
     distX : 0,          // X-axis distance to move
     distY : 0,          // Y-axis distance to move
 
-    w : 30,
-    h : 30,
+    //color : "#" + randomIntFromInterval(0,9) + "" + randomIntFromInterval(0,9) + "" + randomIntFromInterval(0,9) + "" + randomIntFromInterval(0,9) + "" + randomIntFromInterval(0,9) + "" + randomIntFromInterval(0,9),
+    //color : "rgb("+randomIntFromInterval(0,255)+","+randomIntFromInterval(0,255)+","+randomIntFromInterval(0,255)+")",
 
-    x : this.beginX,
-    y : this.beginY,
+    color : bullet_colors[bullet_color_index++],
+    w : 4,
+    h : 4,
 
-    // x : Player.x + Player.w/2,        // Current x-coordinate
-    // y : 10,        // Current y-coordinate
-    step : 0.02,    // Size of each step along the path
-    pct : 0.0,      // Percentage traveled (0.0 to 1.0)
+    x : theX,
+    y : theY,
 
     display : function () {
 
-      this.x = Number(this.x);
-      this.y = Number(this.y);
+      if(bullet_color_index == bullet_colors.length){
+        bullet_color_index = 0;
+      } else {
 
-      this.pct += this.step;
-
-      if (this.pct < 1.0) {
-        this.x = this.beginX + (this.pct * this.distX);
-        this.y = this.beginY + (this.pct * this.distY);
       }
 
-      this.distX = this.endX - this.beginX;
-      this.distY = this.endY - this.beginY;
+      this.x += this.dx;
+      this.y += this.dy;
 
-      // // if there are ships in the ship array
-      // if(para_squirrels.length > 0){
-      // // look to see if the x,y of this bullet is in each of the ships 2d area
-      //
-      //   for(var i = 0; i<para_squirrels.length; i+=1){
-      //
-      //     hit = collidePointRect(this.x, this.y,para_squirrels[i].x,para_squirrels[i].y,para_squirrels[i].w,para_squirrels[i].h); //see if the mouse is in the rect
-      //
-      //     if(hit && !para_squirrels[i].hasBeenHit ){
-      //       // console.log("hit",this.x, this.y,para_squirrels[i].x, para_squirrels[i].y, para_squirrels[i].w, para_squirrels[i].h);
-      //       para_squirrels[i].hasBeenHit = true;
-      //       game.score += 1;
-      //       document.getElementById('score').innerHTML = game.score;
-      //     } else{
-      //
-      //     }
-      //   }
-      //
-      // }
+      // if there are ships in the ship array
+      if(astroids.length > 0) {
+      // look to see if the x,y of this bullet is in each of the ships 2d area
 
+        for(var i = 0; i<astroids.length; i+=1){
+          var hit = false;
+          if(astroids[i].x < this.x + this.w &&
+             astroids[i].x + astroids[i].w > this.x &&
+             astroids[i].y < this.y + this.w &&
+             astroids[i].h + astroids[i].y > this.y &&
+             astroids[i].status == 1 ) {
+             //hit = true;
+             astroids[i].status = 0;
+             console.log(astroids[i]);
+           }
 
-      //image(canonball,this.x, this.y,36,36);
-      //context.fill();
-      //ellipse(this.x, this.y, 36, 36);
+          if(astroids[i].status == 0 && !astroids[i].hasBeenHit ){
+            console.log("hit");
+            astroids[i].hasBeenHit = true;
+            game.score += 1;
+            document.getElementById('score').innerHTML = game.score;
+          }
+        }
+
+      }
 
       context.beginPath();
-      context.arc(this.x, this.y, 3, 0, Math.PI*2, false);
-      context.stroke();
+      context.arc(this.x, this.y, this.w, 0, Math.PI*2, false);
+
+      context.fillStyle = this.color;
+      context.fill();
+
       context.closePath();
+
+
 
     }
   });
 }
 
-
-
-
-// event delegates
-function onMouseMove(evt) {
-    'use strict';
-    evt.preventDefault();
-
-    if (mouseIsDown) {
-        console.log("mouse is down X:" + evt.pageX);
-
-        if (evt.changedTouches && evt.changedTouches.length > 0) {
-            player.x = evt.changedTouches[0].pageX;
-            player.y = evt.changedTouches[0].pageY;
-            player.dx = 0;
-            player.dy = 0;
-
-        } else {
-            player.x = evt.pageX - 50;
-            player.y = evt.pageY;
-            player.dx = 0;
-            player.dy = 0;
-            player.draw();
-        }
-    }
-}
-
-function onMouseStart(e) {
-    'use strict';
-    e.preventDefault();
-
-    if (e.changedTouches && e.changedTouches.length > 0) {
-        clickX = e.changedTouches[0].pageX;
-        clickY = e.changedTouches[0].pageY;
-
-    } else {
-        clickX = e.pageX;
-        clickY = e.pageY;
-        // player.x = e.pageX;
-        // player.y = e.pageY;
-    }
-
-    mouseIsDown = true;
-}
-
-function onMouseEnd(e) {
-    'use strict';
-    e.preventDefault();
-    mouseIsDown = false;
-
-    if (e.changedTouches && e.changedTouches.length > 0) {
-        releaseX = e.changedTouches[0].pageX;
-        releaseY = e.changedTouches[0].pageY;
-    } else {
-        releaseX = e.pageX;
-        releaseY = e.pageY;
-    }
-
-    player.x = releaseX;
-    player.y = releaseY;
-
-    // velocity hack...
-    player.dx = (clickX - releaseX) / 10;
-    player.dy = (clickY - releaseY) / 10;
-}
-
-function keyCheck(event) {
-
-}
-
-// end event delegates
-
-
+var delay_count = 0;
+var delay = 5;
 
 var game = {
   tempScore:0,
   score:0
 };
 
-var coordinates = [
-    {x:160,y:160},{x:140,y:140},{x:180,y:140},{x:120,y:120},{x:160,y:120},
-    {x:200,y:120},{x:100,y:100},{x:140,y:100},{x:180,y:100},{x:220,y:100}
-];
 
   function drawRotatedImage(image, x, y, angle) {
 
@@ -205,8 +149,21 @@ var coordinates = [
   	context.restore();
   }
 
-var squirrelImage = new Image();
-squirrelImage.src = "img/home_page_squirrel1.png";
+var bullet_colors = ['red','orange','yellow','green','blue','purple','black'];
+var bullet_color_index = 0;
+
+var astroidImageTmp;
+var astroidImages = [];
+
+for(var i=0;i<4;i+=1){
+  astroidImageTmp = new Image()
+  astroidImageTmp.src = "img/astroid0" + i + ".png";
+  astroidImages.push(astroidImageTmp);
+}
+
+
+var shipImage = new Image();
+shipImage.src = "img/ship.png";
 
 var player = {
     color: "#00A",
@@ -222,70 +179,79 @@ var player = {
     dy: 0, // amt to accelerate by -- vertical
     width: 20,
     height: 10,
+    bullet_number : 20,
+    fire_delay: 20,
     fire : function(){
-      addBullet();
+        addBullet();
     },
     moveLeft : function(){
-      //this.rotation -= 1;
-      player.dx -= .05;
+      this.rotation -= 1;
+      //this.rotation %= 360;
+
+      if(this.rotation < 0) {
+      	this.rotation += 360;
+      }
+
     },
     moveRight : function(){
-      //this.rotation += 1;
-      player.dx += .05;
+      this.rotation += 1;
+      //this.rotation %= 360;
+
+      if(this.rotation >= 360){
+      	this.rotation -= 360;
+      }
     },
     moveUp : function(){
-      player.dy -= .05;
+      this.dx -= Xacceleration[this.rotation]/10;
+      this.dy -= Yacceleration[this.rotation]/10;
     },
     moveDown : function(){
-      player.dy += .05;
+      this.dx += Xacceleration[this.rotation]/10;
+      this.dy += Yacceleration[this.rotation]/10;
     },
     draw: function () {
       'use strict';
 
       if (activeKeys[39]) {
           player.moveRight();
-
       }
       if (activeKeys[37]) {
           player.moveLeft();
-
       }
       if (activeKeys[38]) {
-          player.moveUp();
-      }
-      if (activeKeys[40]) {
           player.moveDown();
       }
+      if (activeKeys[40]) {
+
+          player.moveUp();
+      }
       if (activeKeys[32]) {
+        if(delay_count == 0){
           player.fire();
+        }
+      }
+
+      if(delay_count == delay){
+        delay_count = 0;
+      } else {
+        delay_count += 1;
       }
 
       // add drag...
       player.dy !== 0 ? player.dy *= player.drag : player.dy;
       player.dx !== 0 ? player.dx *= player.drag : player.dx;
 
-
-      //console.log(player.dx, player.dy);
-
       if(Math.abs(player.dx) < .01 && Math.abs(player.dy) < .01){
         player.dx = 0;
         player.dy = 0;
       }
 
-
-
       this.newX = this.x += this.dx/3;
       this.newY = this.y += this.dy/3;
 
-      if(this.dx == 0 && this.dy == 0){
-        squirrelImage.src = "img/home_page_squirrel1.png";
-      } else {
-        squirrelImage.src = "img/home_page_squirrel2.png";
-      }
+      shipImage.src = "img/ship.png";
 
-      //context.drawImage(squirrelImage, this.x, this.y, 100, 100);
-
-      drawRotatedImage(squirrelImage, this.x, this.y, player.rotation);
+      drawRotatedImage(shipImage, this.x, this.y, player.rotation);
 
       if (this.newX >= (canvasWidth)) {
         this.newY = this.y;
@@ -312,11 +278,9 @@ var player = {
           // this.dy = 0;
       }
 
-
-      document.getElementById("score").innerHTML = "Landed on : " + parseInt(this.x) + " TempScore : " + parseInt(game.tempScore) + " Score : " + game.score;
-          // perfect is 432:
-          // score is Math.abs(432-this.x)
-
+      document.getElementById("score").innerHTML =
+        "astroids : " + astroids.length + " ... " +
+        "bullets : " + bullets.length;
 
       this.x = this.newX;
       this.y = this.newY;
@@ -324,62 +288,61 @@ var player = {
 };
 
 function draw(){
-    'use strict';
+    //'use strict';
     context.clearRect(0, 0, canvasWidth, canvasHeight);
     for(var i=0;i<bullets.length; i+=1){
+      bullets[i].display();
 
-      // if (pins[i].x < player.x + player.width &&
-      //    pins[i].x + pins[i].width > player.x &&
-      //    pins[i].y < player.y + player.height &&
-      //    pins[i].height + pins[i].y > player.y &&
-      //    pins[i].status == 1 ) {
-      //     // collision detected!
-      //     pins[i].status = 0;
-      //
-      //     game.score += 1;
-      // }
-
-      //if(bullets[i].status == 1){
-        bullets[i].display();
-
-        if(bullets[i].x <= 15 || bullets[i].y <= 15){
-          bullets.splice(i);
+        if(
+          bullets[i].x <= 1 ||
+          bullets[i].y <= 1 ||
+          bullets[i].x >= canvasWidth ||
+          bullets[i].y >= canvasHeight ) {
+            bullets.splice(i,1);
         }
-      //}
 
     }
 
+    for(var i = 0; i < astroids.length; i+=1){
+      astroids[i].display();
+
+      if(astroids[i].x < 0) {
+        astroids[i].x = canvasWidth-1;
+      }
+
+      if(astroids[i].y < 0) {
+        astroids[i].y = canvasHeight-1;
+      }
+
+      if(astroids[i].x >= canvasWidth) {
+        astroids[i].x = 2;
+      }
+
+      if(astroids[i].y >= canvasHeight) {
+        astroids[i].y = 2;
+      }
+
+      if(astroids[i].hasBeenHit){
+        astroids.splice(i,1);
+      }
+    }
+
     player.draw();
-
 }
-
-
-
-
-
-
 
 window.addEventListener('load', function() {
     'use strict';
     init();
-
 }, false);
 
 window.addEventListener('keydown', function(e){
-
-console.log(e.keyCode);
-
   e.preventDefault();
-
   activeKeys[e.keyCode]=true;
-
 }, false);
 
 window.addEventListener('keyup', function(e){
       e.preventDefault();
-
       activeKeys[e.keyCode]=false;
-
 }, false);
 
 function init() {
@@ -389,29 +352,48 @@ function init() {
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
 
-    console.log(canvas.width, canvas.height);
-
     canvas.id = "gameboard";
 
-    //canvas.style.background = "url(img/gameboard.jpg)";
-
     document.body.appendChild(canvas);
-
-    // delegates
-    canvas.addEventListener('mousemove', onMouseMove, false);
-    canvas.addEventListener('mousedown', onMouseStart, false);
-    canvas.addEventListener('mouseup', onMouseEnd, false);
-    canvas.addEventListener('touchmove', onMouseMove, false);
-    canvas.addEventListener('touchstart', onMouseStart, false);
-    canvas.addEventListener('touchend', onMouseEnd, false);
-
-    document.addEventListener('keyup', keyCheck, false);
 
     context = canvas.getContext("2d");
 
     canvasWidth = window.innerWidth;
     canvasHeight = window.innerHeight;
     var FPS = 30;
+
+    intervalID = window.setInterval(function(){
+
+      var rand_start_x = randomIntFromInterval(10,canvasWidth-10);
+      var rand_start_y = randomIntFromInterval(10,canvasHeight-10);
+      var imageIndex = randomIntFromInterval(0,3);
+
+      astroids.push({
+        beginX : rand_start_x,  // Initial x-coordinate
+        beginY : rand_start_y,  // Initial y-coordinate
+
+        dx : (Math.random() * 2) - 1,
+        dy : (Math.random() * 2) - 1,
+
+        hasBeenHit : 0,
+        status : 1,
+
+        w : 100,
+        h : 100,
+
+        x : rand_start_x,        // Current x-coordinate
+        y : rand_start_y,        // Current y-coordinate
+
+        display : function () {
+
+          drawRotatedImage(astroidImages[imageIndex],this.x,this.y,0);
+
+          this.x += this.dx;
+          this.y += this.dy;
+        }
+      });
+
+  }, 1000);
 
     setInterval(function () {
         //update();
