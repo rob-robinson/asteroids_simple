@@ -367,6 +367,7 @@ function init() {
       var rand_start_x = randomIntFromInterval(10,canvasWidth-10);
       var rand_start_y = randomIntFromInterval(10,canvasHeight-10);
       var imageIndex = randomIntFromInterval(0,3);
+      var rand_rotation = randomIntFromInterval(0,359);
 
       astroids.push({
         beginX : rand_start_x,  // Initial x-coordinate
@@ -386,7 +387,7 @@ function init() {
 
         display : function () {
 
-          drawRotatedImage(astroidImages[imageIndex],this.x,this.y,0);
+          drawRotatedImage(astroidImages[imageIndex],this.x,this.y,rand_rotation);
 
           this.x += this.dx;
           this.y += this.dy;
