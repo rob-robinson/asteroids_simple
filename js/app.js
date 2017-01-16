@@ -13,6 +13,9 @@ window.requestAnimationFrame = function () {
 //var Assets = {};
 var canvas;
 var context; //
+
+var max_asteroids;
+
 var canvasWidth = window.innerWidth, canvasHeight = window.innerHeight;
 //var mouseIsDown = false;
 // var clickX,clickY;
@@ -379,57 +382,62 @@ function init() {
     canvasHeight = window.innerHeight;
     var FPS = 30;
 
+    max_asteroids = 30;
+
     intervalID = window.setInterval(function(){
 
-      var rand_start_x = randomIntFromInterval(10,canvasWidth-10);
-      var rand_start_y = randomIntFromInterval(10,canvasHeight-10);
-      var imageIndex = randomIntFromInterval(0,3);
-      var rand_rotation = randomIntFromInterval(0,359);
+        if(asteroids.push.length < max_asteroids) {
 
-      asteroids.push({
-        beginX : rand_start_x,  // Initial x-coordinate
-        beginY : rand_start_y,  // Initial y-coordinate
+            var rand_start_x = randomIntFromInterval(10, canvasWidth - 10);
+            var rand_start_y = randomIntFromInterval(10, canvasHeight - 10);
+            var imageIndex = randomIntFromInterval(0, 3);
+            var rand_rotation = randomIntFromInterval(0, 359);
 
-        dx : (Math.random() * 2) - 1,
-        dy : (Math.random() * 2) - 1,
+            asteroids.push({
+                beginX: rand_start_x,  // Initial x-coordinate
+                beginY: rand_start_y,  // Initial y-coordinate
 
-        hasBeenHit : 0,
-        status : 1,
+                dx: (Math.random() * 2) - 1,
+                dy: (Math.random() * 2) - 1,
 
-        rotation : rand_rotation,
+                hasBeenHit: 0,
+                status: 1,
 
-        w : 100,
-        h : 100,
+                rotation: rand_rotation,
 
-        x : rand_start_x,        // Current x-coordinate
-        y : rand_start_y,        // Current y-coordinate
+                w: 100,
+                h: 100,
 
-        rotation_delay_count : 0,
-        rotation_delay : randomIntFromInterval(0,50),
+                x: rand_start_x,        // Current x-coordinate
+                y: rand_start_y,        // Current y-coordinate
 
-        display : function () {
+                rotation_delay_count: 0,
+                rotation_delay: randomIntFromInterval(0, 50),
 
-          if(this.hasBeenHit){
-            //drawRotatedImage(explosionImage,this.x,this.y,rand_rotation,100,100);
-            context.drawImage(explosionImage,this.x-this.w/2,this.y-this.h/2,this.w,this.h);
-            this.w *= .996;
-            this.h *= .996;
+                display: function () {
 
-          } else {
-            if(this.rotation_delay == this.rotation_delay_count){
-              drawRotatedImage(astroidImages[imageIndex],this.x,this.y,this.rotation++);
-              this.rotation_delay_count = 0;
-            } else {
-              drawRotatedImage(astroidImages[imageIndex],this.x,this.y,this.rotation);
-            }
-          }
+                    if (this.hasBeenHit) {
+                        //drawRotatedImage(explosionImage,this.x,this.y,rand_rotation,100,100);
+                        context.drawImage(explosionImage, this.x - this.w / 2, this.y - this.h / 2, this.w, this.h);
+                        this.w *= .996;
+                        this.h *= .996;
 
-          this.x += this.dx;
-          this.y += this.dy;
+                    } else {
+                        if (this.rotation_delay == this.rotation_delay_count) {
+                            drawRotatedImage(astroidImages[imageIndex], this.x, this.y, this.rotation++);
+                            this.rotation_delay_count = 0;
+                        } else {
+                            drawRotatedImage(astroidImages[imageIndex], this.x, this.y, this.rotation);
+                        }
+                    }
 
-          this.rotation_delay_count += 1;
+                    this.x += this.dx;
+                    this.y += this.dy;
+
+                    this.rotation_delay_count += 1;
+                }
+            });
         }
-      });
 
   }, 1000);
 
