@@ -1,5 +1,5 @@
-# Astroids
+# asteroids
 
-astroids... this is just for playful conceptualizing and learning the canvas element...
+asteroids... this is just for playful conceptualizing and learning the canvas element...
 
-<https://rob-robinson.github.io/astroids_simple>
+<https://rob-robinson.github.io/asteroids_simple>

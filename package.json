@@ -1,5 +1,5 @@
 {
-  "name": "astroids",
+  "name": "asteroids",
   "version": "1.0.0",
   "description": "small ship stuck in space... so far this is just for playful conceptualizing and learning the canvas element...",
   "main": "gulpfile.js",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com-rob-robinson:rob-robinson/astroids_simple.git"
+    "url": "git@github.com-rob-robinson:rob-robinson/asteroids_simple.git"
   },
   "author": "",
   "license": "ISC",
