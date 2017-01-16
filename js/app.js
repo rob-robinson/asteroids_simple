@@ -386,7 +386,7 @@ function init() {
 
     intervalID = window.setInterval(function(){
 
-        if(asteroids.push.length < max_asteroids) {
+        if(asteroids.length < max_asteroids) {
 
             var rand_start_x = randomIntFromInterval(10, canvasWidth - 10);
             var rand_start_y = randomIntFromInterval(10, canvasHeight - 10);
