@@ -1,7 +1,7 @@
 var gulp = require('gulp');
 var browserSync = require('browser-sync');
 var reload = browserSync.reload;
-
+// used for development...
 // watch files for changes and reload
 gulp.task('serve', function() {
   browserSync({
