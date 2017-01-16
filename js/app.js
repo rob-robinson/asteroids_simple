@@ -26,10 +26,10 @@ the bottom parts of the screen as well...
 // array of keys that are currently pressed
 var activeKeys = [];
 
-var astroids = [];
+var asteroids = [];
 var bullets = [];
 
-// this is the id of the setInterval that launches astroids...
+// this is the id of the setInterval that launches asteroids...
 var intervalID;
 
 // an set of arrays to hold sine and cosine values for less computation in draw
@@ -85,24 +85,24 @@ function addBullet(){
       this.y += this.dy;
 
       // if there are ships in the ship array
-      if(astroids.length > 0) {
+      if(asteroids.length > 0) {
       // look to see if the x,y of this bullet is in each of the ships 2d area
 
-        for(var i = 0; i<astroids.length; i+=1){
+        for(var i = 0; i<asteroids.length; i+=1){
           var hit = false;
-          if(astroids[i].x < this.x + this.w &&
-             astroids[i].x + astroids[i].w > this.x &&
-             astroids[i].y < this.y + this.w &&
-             astroids[i].h + astroids[i].y > this.y &&
-             astroids[i].status == 1 ) {
+          if(asteroids[i].x < this.x + this.w &&
+             asteroids[i].x + asteroids[i].w > this.x &&
+             asteroids[i].y < this.y + this.w &&
+             asteroids[i].h + asteroids[i].y > this.y &&
+             asteroids[i].status == 1 ) {
              //hit = true;
-             astroids[i].status = 0;
-             console.log(astroids[i]);
+             asteroids[i].status = 0;
+             console.log(asteroids[i]);
            }
 
-          if(astroids[i].status == 0 && !astroids[i].hasBeenHit ){
+          if(asteroids[i].status == 0 && !asteroids[i].hasBeenHit ){
             console.log("hit");
-            astroids[i].hasBeenHit = true;
+            asteroids[i].hasBeenHit = true;
             game.score += 1;
             document.getElementById('score').innerHTML = game.score;
           }
@@ -167,7 +167,7 @@ var astroidImages = [];
 
 for(var i=0;i<4;i+=1){
   astroidImageTmp = new Image()
-  astroidImageTmp.src = "img/astroid0" + i + ".png";
+  astroidImageTmp.src = "img/asteroid0" + i + ".png";
   astroidImages.push(astroidImageTmp);
 }
 
@@ -288,7 +288,7 @@ var player = {
       }
 
       document.getElementById("score").innerHTML =
-        "astroids : " + astroids.length + " ... " +
+        "asteroids : " + asteroids.length + " ... " +
         "bullets : " + bullets.length;
 
       this.x = this.newX;
@@ -312,35 +312,35 @@ function draw(){
 
     }
 
-    for(var i = 0; i < astroids.length; i+=1){
-      astroids[i].display();
+    for(var i = 0; i < asteroids.length; i+=1){
+      asteroids[i].display();
 
-      if(astroids[i].x < 0) {
-        astroids[i].x = canvasWidth-1;
+      if(asteroids[i].x < 0) {
+        asteroids[i].x = canvasWidth-1;
       }
 
-      if(astroids[i].y < 0) {
-        astroids[i].y = canvasHeight-1;
+      if(asteroids[i].y < 0) {
+        asteroids[i].y = canvasHeight-1;
       }
 
-      if(astroids[i].x >= canvasWidth) {
-        astroids[i].x = 2;
+      if(asteroids[i].x >= canvasWidth) {
+        asteroids[i].x = 2;
       }
 
-      if(astroids[i].y >= canvasHeight) {
-        astroids[i].y = 2;
+      if(asteroids[i].y >= canvasHeight) {
+        asteroids[i].y = 2;
       }
 
-      if(astroids[i].hasBeenHit &&
-        (astroids[i].x > canvasWidth-10 || astroids[i].x < 10 || astroids[i].y > canvasHeight-10 || astroids[i].y < 10)
+      if(asteroids[i].hasBeenHit &&
+        (asteroids[i].x > canvasWidth-10 || asteroids[i].x < 10 || asteroids[i].y > canvasHeight-10 || asteroids[i].y < 10)
       ){
 
-        astroids.splice(i,1);
+        asteroids.splice(i,1);
       }
 
-    if(astroids[i].hasBeenHit && astroids[i].w<10){
+    if(asteroids[i].hasBeenHit && asteroids[i].w<10){
 
-      astroids.splice(i,1);
+      asteroids.splice(i,1);
       }
     }
 
@@ -386,7 +386,7 @@ function init() {
       var imageIndex = randomIntFromInterval(0,3);
       var rand_rotation = randomIntFromInterval(0,359);
 
-      astroids.push({
+      asteroids.push({
         beginX : rand_start_x,  // Initial x-coordinate
         beginY : rand_start_y,  // Initial y-coordinate
 
